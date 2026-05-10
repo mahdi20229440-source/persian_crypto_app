@@ -1,39 +1,42 @@
-name: Build APK
+    name: Build APK
 
-on:
-  push:
-    branches:
-      - main
+    on:
+      push:
+        branches:
+          - main
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # ✅ این خط را اضافه کن
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4   # ✅ updated version
+    jobs:
+      build:
+        runs-on: ubuntu-latest
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
 
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y zip unzip openjdk-17-jdk python3-pip python3-setuptools python3-wheel
+          - name: Set up Python
+            uses: actions/setup-python@v5
+            with:
+              python-version: '3.11'
 
-      - name: Install buildozer
-        run: |
-          pip install --upgrade pip
-          pip install buildozer cython
+          - name: Install system dependencies
+            run: |
+              sudo apt update
+              sudo apt install -y zip unzip openjdk-17-jdk python3-pip python3-setuptools python3-wheel
 
-      - name: Build with Buildozer
-        run: |
-          buildozer android debug
+          - name: Install buildozer
+            run: |
+              pip install --upgrade pip
+              pip install buildozer cython
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: bin/*.apk
+          - name: Build with Buildozer
+            run: |
+              buildozer android debug
+
+          - name: Upload APK
+            uses: actions/upload-artifact@v4
+            with:
+              name: apk
+              path: bin/*.apk
