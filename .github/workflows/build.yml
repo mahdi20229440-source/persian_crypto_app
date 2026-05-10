@@ -1,22 +1,35 @@
 name: Build APK
-on: [push]
+
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4   # ✅ updated version
 
-      - name: Install Buildozer
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install -y python3-pip git openjdk-17-jdk
-          pip3 install --user buildozer cython==0.29.33
+          sudo apt install -y zip unzip openjdk-17-jdk python3-pip python3-setuptools python3-wheel
 
-      - name: Build APK
+      - name: Install buildozer
         run: |
-          export PATH=$PATH:$HOME/.local/bin
+          pip install --upgrade pip
+          pip install buildozer cython
+
+      - name: Build with Buildozer
+        run: |
           buildozer android debug
 
       - name: Upload APK
