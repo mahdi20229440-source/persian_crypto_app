@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
@@ -16,34 +20,47 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git python3-dev ffmpeg libsdl2-dev libsdl2-image-dev \
-            libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev \
-            libavformat-dev libavcodec-dev zlib1g-dev libffi-dev libssl-dev \
-            openjdk-17-jdk zip unzip autoconf automake libtool pkg-config cmake
+          sudo apt-get install -y \
+          build-essential git python3-dev ffmpeg \
+          libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
+          libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev \
+          zlib1g-dev libffi-dev libssl-dev \
+          openjdk-17-jdk zip unzip \
+          autoconf automake libtool pkg-config cmake
 
       - name: Install buildozer and cython
         run: |
           pip install --upgrade pip
           pip install "cython<3.0.0"
           pip install buildozer
-          # اضافه کردن مسیر نصب به محیط سیستم
           echo "/home/runner/.local/bin" >> $GITHUB_PATH
 
+      - name: Show project structure
+        run: ls -R
+
       - name: Build with Buildozer
-        run: |
-          # اجرای مستقیم با اطمینان از تایید تمام سوالات
-          yes | buildozer android debug
         env:
-          # این بخش برای جلوگیری از خطاهای احتمالی جاوا است
           JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+        run: |
+          SPEC=$(find . -name "buildozer.spec" -print -quit)
+
+          if [ -z "$SPEC" ]; then
+            echo "buildozer.spec not found!"
+            exit 1
+          fi
+
+          DIR=$(dirname "$SPEC")
+          cd "$DIR"
+
+          yes | buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: apk
-          path: bin/*.apk
+          path: "**/bin/*.apk"
