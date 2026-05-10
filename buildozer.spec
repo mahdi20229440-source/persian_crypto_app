@@ -1,50 +1,33 @@
-name: Build APK
+[app]
 
-on:
-  push:
-    branches:
-      - main
+title = Persian Crypto
+package.name = persiancrypto
+package.domain = org.example
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+source.dir = .
+source.include_exts = py,kv,png,jpg,ttf
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+version = 1.0
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+requirements = python3,kivy
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+orientation = portrait
 
-      - name: List files (Debug)
-        run: |
-          echo "Checking directory structure..."
-          ls -R
+fullscreen = 0
 
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y zip unzip openjdk-17-jdk python3-pip python3-setuptools python3-wheel libffi-dev autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake
 
-      - name: Install buildozer and cython
-        run: |
-          pip install --upgrade pip
-          pip install "cython<3.0.0"
-          pip install buildozer
+[buildozer]
 
-      - name: Build with Buildozer
-        run: |
-          # اگر فایل buildozer.spec در ریشه نیست، به پوشه مربوطه برو
-          # فرض می‌کنیم فایل‌ها در ریشه هستند، اگر نبود در لاگ LS معلوم می‌شود
-          yes | buildozer android debug
+log_level = 2
+warn_on_root = 1
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: bin/*.apk
+
+[app:android]
+
+permissions = INTERNET
+
+android.api = 31
+android.minapi = 21
+android.sdk = 31
+android.ndk = 23b
+android.arch = armeabi-v7a, arm64-v8a
