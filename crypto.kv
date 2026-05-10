@@ -1,0 +1,101 @@
+<CryptoManager>:
+    MenuScreen:
+        name: "menu"
+    EncryptScreen:
+        name: "encrypt"
+    DecryptScreen:
+        name: "decrypt"
+
+
+<MenuScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 30
+        spacing: 20
+
+        Label:
+            id: title_label
+            font_size: 34
+            bold: True
+            size_hint_y: 0.3
+
+        Button:
+            id: encrypt_btn
+            size_hint_y: 0.2
+            on_release: root.manager.current = "encrypt"
+
+        Button:
+            id: decrypt_btn
+            size_hint_y: 0.2
+            on_release: root.manager.current = "decrypt"
+
+        Button:
+            id: exit_btn
+            size_hint_y: 0.2
+            on_release: app.stop()
+
+
+<EncryptScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 25
+        spacing: 15
+
+        TextInput:
+            id: input_text
+            hint_text: "Enter text to encrypt"
+            font_size: 22
+            multiline: True
+            size_hint_y: 0.4
+
+        Button:
+            id: encrypt_button
+            text: "Encrypt"
+            size_hint_y: 0.15
+            on_release: root.do_encrypt()
+
+        TextInput:
+            id: output_code
+            font_size: 20
+            readonly: True
+            multiline: True
+            size_hint_y: 0.35
+
+        Button:
+            id: back_button
+            text: "Back"
+            size_hint_y: 0.1
+            on_release: root.manager.current = "menu"
+
+
+<DecryptScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 25
+        spacing: 15
+
+        TextInput:
+            id: input_code
+            hint_text: "Paste numeric code here"
+            font_size: 22
+            multiline: True
+            size_hint_y: 0.4
+
+        Button:
+            id: decrypt_button
+            text: "Decrypt"
+            size_hint_y: 0.15
+            on_release: root.do_decrypt()
+
+        TextInput:
+            id: output_text
+            font_size: 22
+            readonly: True
+            multiline: True
+            size_hint_y: 0.35
+
+        Button:
+            id: back_button
+            text: "Back"
+            size_hint_y: 0.1
+            on_release: root.manager.current = "menu"
