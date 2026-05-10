@@ -10,7 +10,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -21,22 +21,47 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: List files (Debug)
+        run: |
+          echo "Checking directory structure..."
+          ls -R
+
       - name: Install system dependencies
         run: |
-          sudo apt update
-          sudo apt install -y zip unzip openjdk-17-jdk python3-pip python3-setuptools python3-wheel libffi-dev
-          # نصب کتابخانه‌های ضروری برای اندروید
-          sudo apt install -y autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            git \
+            python3-dev \
+            ffmpeg \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-mixer-dev \
+            libsdl2-ttf-dev \
+            libportmidi-dev \
+            libswscale-dev \
+            libavformat-dev \
+            libavcodec-dev \
+            zlib1g-dev \
+            libffi-dev \
+            libssl-dev \
+            openjdk-17-jdk \
+            zip \
+            unzip \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            cmake
 
       - name: Install buildozer and dependencies
         run: |
           pip install --upgrade pip
-          pip install "cython<3.0.0"  # نسخه سازگارتر
+          pip install "cython<3.0.0"
           pip install buildozer
 
       - name: Build with Buildozer
         run: |
-          # اجرای بیلد در حالت خودکار (بدون سوال پرسیدن)
           yes | buildozer android debug
 
       - name: Upload APK
